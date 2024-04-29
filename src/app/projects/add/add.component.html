@@ -1,1 +1,28 @@
-<p>add works!</p>
+<div class="row">
+
+  <form [formGroup]="addProjectForm" (ngSubmit)="onSubmit()">
+    <div class="col-2"></div>
+<!--    <div class="form-group col-8">-->
+<!--      <label for="id">ID</label>-->
+<!--      <input type="text" id="id" class="form-control" formControlName="id">-->
+<!--    </div>-->
+
+    <div class="form-group col-8">
+      <label for="name">Name</label>
+      <input type="text" id="name" class="form-control" formControlName="name">
+    </div>
+
+    <div class="form-group col-8">
+      <label for="startDate">Start Date</label>
+      <input type="date" id="startDate" class="form-control" formControlName="startDate">
+    </div>
+
+    <div class="form-group col-8">
+      <label for="endDate">End Date</label>
+      <input type="date" id="endDate" class="form-control" formControlName="endDate">
+    </div>
+    <div class="col-2"></div>
+
+    <button class="btn btn-primary" (click)="onSubmit()">Add Project</button>
+  </form>
+</div>

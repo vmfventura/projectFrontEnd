@@ -7,11 +7,16 @@ import {Projects} from "../models/projects";
   providedIn: 'root'
 })
 export class ProjectService {
-  private apiUrl = 'https://localhost:7283/api/Project';
+  private apiUrlQ = 'https://localhost:7283/api/Project';
+  private apiUrlC = 'https://localhost:7285/api/Project';
   constructor(private http: HttpClient) { }
 
   getProjects(): Observable<Projects[]> {
-    return this.http.get<Projects[]>(this.apiUrl);
+    return this.http.get<Projects[]>(this.apiUrlQ);
+  }
+
+  createProject(project: Projects): Observable<Projects> {
+    return this.http.post<Projects>(this.apiUrlC, project);
   }
 }
 

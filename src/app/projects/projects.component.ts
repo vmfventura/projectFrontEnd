@@ -31,14 +31,19 @@ export class ProjectsComponent  {
   displayedColumns = ["id", "name", "startDate", "endDate"];
   selection = new SelectionModel<Projects>(true, []);
   constructor(private projectService: ProjectService) {
+    this.fetchProjects();
+  }
+
+  fetchProjects() {
     this.projectService.getProjects()
       .subscribe((list: Projects[]) => {
         this.projects = list;
 
-        this.dataSource = new MatTableDataSource<Projects>;
-        this.dataSource.paginator = this.paginator;
+        // this.dataSource = new MatTableDataSource<Projects>;
+        // this.dataSource.paginator = this.paginator;
         // this.dataSource.sort = this.sort;
 
       })
+
   }
 }
