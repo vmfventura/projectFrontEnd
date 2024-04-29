@@ -1,0 +1,17 @@
+<p>projects works!</p>
+
+<nav>
+  <a routerLink="/projects/add">Add Projects</a>
+</nav>
+
+<div class="row">
+  <div class="col-2">ID</div>
+  <div class="col-4">Name</div>
+  <div class="col-3">Start Date</div>
+  <div class="col-3">End Date</div>
+</div>
+
+<app-view *ngFor="let project of projects"
+          class="col-12"
+          [project] = "project">
+</app-view>
