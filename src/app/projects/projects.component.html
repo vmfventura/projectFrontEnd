@@ -1,17 +1,22 @@
 <p>projects works!</p>
 
-<nav>
-  <a routerLink="/projects/add">Add Projects</a>
-</nav>
+<button class="btn btn-success"(click)="showAddComponent()">Add Projects</button>
 
+<app-add *ngIf="addShowComponent" (closeShowComponent)="closeAddComponent($event)"></app-add>
+
+<app-details  *ngIf="editShowComponent" [projectId]="projectDetailId" (closeEditShowComponent)="closeEditShowComponent($event)"></app-details>
 <div class="row">
   <div class="col-2">ID</div>
-  <div class="col-4">Name</div>
+  <div class="col-3">Name</div>
   <div class="col-3">Start Date</div>
-  <div class="col-3">End Date</div>
+  <div class="col-2">End Date</div>
+  <div class="col-2">Actions</div>
 </div>
 
-<app-view *ngFor="let project of projects"
-          class="col-12"
-          [project] = "project">
-</app-view>
+<div class="row">
+  <app-view *ngFor="let project of projects"
+            class="col-12"
+            [project]="project"
+            (projectSelected)="projectSelected($event)">
+  </app-view>
+</div>

@@ -1,35 +1,33 @@
-import {Component, OnInit, ViewChild, viewChild, ViewChildren} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {CommonModule} from "@angular/common";
 import {Projects} from "../models/projects";
 import {ProjectService} from "./project.service";
-import {CommonModule} from "@angular/common";
-import {MatTableDataSource, MatTableModule} from "@angular/material/table";
-import {MatPaginator} from "@angular/material/paginator";
-import {MatSort} from "@angular/material/sort";
-import {SelectionModel} from "@angular/cdk/collections";
 import {ViewComponent} from "./view/view.component";
-import {RouterLink} from "@angular/router";
+import {AddComponent} from "./add/add.component";
+import {DetailsComponent} from "./details/details.component";
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-projects',
   standalone: true,
   imports: [
     CommonModule,
-    MatTableModule,
     ViewComponent,
-    RouterLink
+    AddComponent,
+    DetailsComponent
   ],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.css'
 })
 export class ProjectsComponent  {
   projects: Projects [] = [];
+  addShowComponent: boolean = false;
+  @Input() projectDetailId!: Projects;
+  editShowComponent: boolean = false;
+  @Output() projectId = new EventEmitter<Projects>();
+  @Input() closeEditComponent! : boolean;
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-
-  dataSource = new MatTableDataSource(this.projects);
-  displayedColumns = ["id", "name", "startDate", "endDate"];
-  selection = new SelectionModel<Projects>(true, []);
   constructor(private projectService: ProjectService) {
     this.fetchProjects();
   }
@@ -38,12 +36,30 @@ export class ProjectsComponent  {
     this.projectService.getProjects()
       .subscribe((list: Projects[]) => {
         this.projects = list;
-
-        // this.dataSource = new MatTableDataSource<Projects>;
-        // this.dataSource.paginator = this.paginator;
-        // this.dataSource.sort = this.sort;
-
       })
+  }
 
+  showAddComponent() {
+    this.addShowComponent = !this.addShowComponent;
+  }
+
+  showEditComponent() {
+    this.editShowComponent = !this.editShowComponent;
+  }
+
+  closeAddComponent($event: boolean) {
+    this.showAddComponent();
+    this.fetchProjects();
+  }
+
+  closeEditShowComponent($event: boolean) {
+    this.showEditComponent();
+  }
+
+  projectSelected($event: Projects){
+    console.log("projectselected: " + $event);
+    this.projectDetailId = $event;
+    this.showEditComponent();
+    this.projectId.emit($event);
   }
 }
