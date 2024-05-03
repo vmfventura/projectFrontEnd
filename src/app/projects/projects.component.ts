@@ -1,12 +1,10 @@
-import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {Projects} from "../models/projects";
 import {ProjectService} from "./project.service";
 import {ViewComponent} from "./view/view.component";
 import {AddComponent} from "./add/add.component";
 import {DetailsComponent} from "./details/details.component";
-
-declare var bootstrap: any;
 
 @Component({
   selector: 'app-projects',
@@ -23,8 +21,9 @@ declare var bootstrap: any;
 export class ProjectsComponent  {
   projects: Projects [] = [];
   addShowComponent: boolean = false;
-  @Input() projectDetailId!: Projects;
   editShowComponent: boolean = false;
+  buttonAddVisible: boolean = true;
+  @Input() projectDetailId!: Projects;
   @Output() projectId = new EventEmitter<Projects>();
   @Input() closeEditComponent! : boolean;
 
@@ -40,6 +39,7 @@ export class ProjectsComponent  {
   }
 
   showAddComponent() {
+    this.showButtonAdd();
     this.addShowComponent = !this.addShowComponent;
   }
 
@@ -53,13 +53,17 @@ export class ProjectsComponent  {
   }
 
   closeEditShowComponent($event: boolean) {
+    this.showButtonAdd();
     this.showEditComponent();
   }
 
+  showButtonAdd() {
+    this.buttonAddVisible = !this.buttonAddVisible;
+  }
+
   projectSelected($event: Projects){
-    console.log("projectselected: " + $event);
     this.projectDetailId = $event;
+    this.showButtonAdd();
     this.showEditComponent();
-    this.projectId.emit($event);
   }
 }

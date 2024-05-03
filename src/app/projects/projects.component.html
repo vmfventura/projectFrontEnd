@@ -1,6 +1,6 @@
 <p>projects works!</p>
 
-<button class="btn btn-success"(click)="showAddComponent()">Add Projects</button>
+<button *ngIf="buttonAddVisible" class="btn btn-success" (click)="showAddComponent()">Add Projects</button>
 
 <app-add *ngIf="addShowComponent" (closeShowComponent)="closeAddComponent($event)"></app-add>
 
