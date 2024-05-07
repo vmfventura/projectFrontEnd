@@ -7,10 +7,10 @@ import {DetailsComponent} from "./details/details.component";
 const routes: Routes = [
   { path: 'view', component: ViewComponent},
   { path: 'add', component: AddComponent},
-  { path: 'details', component: DetailsComponent}
+  { path: 'details/:id', component: DetailsComponent}
 ];
 
-@NgModule({
+  @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })

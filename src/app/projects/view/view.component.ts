@@ -16,13 +16,16 @@ import {NgIf} from "@angular/common";
 })
 export class ViewComponent {
     @Input() project!: Projects;
+    @Output() enableEditComponent = new EventEmitter<boolean>();
     @Output() projectSelected = new EventEmitter<Projects>();
     @Output() closeEditShowComponent = new EventEmitter<boolean>();
 
     constructor() { }
-    // sendInfo(projectId : number) {
-    //   this.router.navigate(['/details']);
-    // }
+
+  sendEdit(){
+    this.enableEditComponent.emit(true);
+    this.sendInfo();
+  }
     sendInfo() {
       this.projectSelected.emit(this.project)
       this.closeEditShowComponent.emit(true);

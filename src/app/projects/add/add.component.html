@@ -1,9 +1,9 @@
-<form [formGroup]="addProjectForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="addProjectForm">
 
   <div class="row d-flex flex-column align-items-center">
     <div class="form-group col-8">
       <label for="name">Name</label>
-      <input type="text" id="name" class="form-control" required formControlName="name" maxlength="51" minlength="2">
+      <input  type="text" id="name" class="form-control" required formControlName="name" maxlength="51" minlength="2">
       <div *ngIf="addProjectForm.errors?.['requiredName'] && tryToSubmit"
            class="cross-validation-error-message alert alert-danger" role="alert">Name can't be empty
       </div>
@@ -35,7 +35,9 @@
     </div>
 
     <div class="col-8 mt-3 button-position">
-      <button class="btn btn-success">Add Project</button>
+      <button class="btn btn-success" (click)="onSubmit()">
+        {{ enableOrDisable ? 'Edit Project' : 'Add Project' }}
+      </button>
       <button class="btn btn-primary" (click)="goBack()">Go back</button>
     </div>
 

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -20,20 +20,35 @@ import {CommonModule} from "@angular/common";
   templateUrl: './add.component.html',
   styleUrl: './add.component.css'
 })
-export class AddComponent implements OnInit {
+export class AddComponent implements OnInit, OnDestroy {
   addProjectForm!: FormGroup;
   tryToSubmit = false;
+  isDisabled: boolean = false;
   @Output() closeShowComponent = new EventEmitter<boolean>();
+  @Input() projectId!: Projects;
+  @Input() enableOrDisable! : boolean;
 
   constructor(private projectService: ProjectService) {
   }
 
+  private createFormControl(value: any, isDisabled: boolean): FormControl {
+    return new FormControl({value: value, disabled: isDisabled}, Validators.required);
+  }
+
   ngOnInit() {
+    this.isDisabled = this.enableOrDisable;
+    const projectId = this.projectId || new Projects(0,"", new Date(), new Date());
+
     this.addProjectForm = new FormGroup({
-      name: new FormControl('', Validators.required),
-      startDate: new FormControl('', Validators.required),
-      endDate: new FormControl('', Validators.required)
+      id: this.createFormControl(projectId.id, this.isDisabled),
+      name: this.createFormControl(projectId.name, this.isDisabled),
+      startDate: this.createFormControl(projectId.startDate, this.isDisabled),
+      endDate: new FormControl(projectId.endDate, Validators.required)
     }, {validators: this.testeValidators});
+  }
+
+  ngOnDestroy() {
+    this.closeShowComponent.unsubscribe();
   }
 
   testeValidators: ValidatorFn = (
@@ -80,22 +95,43 @@ export class AddComponent implements OnInit {
 
   onSubmit() {
     this.addProjectForm.updateValueAndValidity();
-    this.tryToSubmit = true;
-    if (this.addProjectForm.valid) {
-      const project: Projects = this.addProjectForm.value;
-      this.projectService.createProject(project).subscribe({
-        next: response => {
-          console.log("done it");
-        },
-        error: error => {
-          console.log("error");
-        },
-        complete: () => {
-          this.goBack();
-        }
-      });
-    } else {
-      console.log("not valid");
+    if (!this.isDisabled)
+    {
+      // this.tryToSubmit = true;
+      if (this.addProjectForm.valid) {
+        const project: Projects = this.addProjectForm.value;
+        this.projectService.createProject(project).subscribe({
+          next: response => {
+            console.log("done it");
+          },
+          error: error => {
+            console.log("error");
+          },
+          complete: () => {
+            this.goBack();
+          }
+        });
+      } else {
+        console.log("not valid");
+      }
+    }
+    else {
+      if (this.addProjectForm.valid) {
+        const project: Projects = this.addProjectForm.getRawValue();
+        this.projectService.updateProject(project).subscribe({
+          next: response => {
+            console.log("done it");
+          },
+          error: error => {
+            console.log("error");
+          },
+          complete: () => {
+            this.goBack();
+          }
+        });
+      } else {
+        console.log("not valid");
+      }
     }
   }
 

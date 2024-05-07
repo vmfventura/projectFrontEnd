@@ -1,10 +1,12 @@
 <p>projects works!</p>
 
 <button *ngIf="buttonAddVisible" class="btn btn-success" (click)="showAddComponent()">Add Projects</button>
+<button *ngIf="buttonAddVisible" class="btn btn-success" (click)="cleanBoxes()">Clear</button>
 
-<app-add *ngIf="addShowComponent" (closeShowComponent)="closeAddComponent($event)"></app-add>
+<app-add *ngIf="addShowComponent" [enableOrDisable]="enableEditComponent" [projectId]="projectDetailId!" (closeShowComponent)="closeAddComponent($event)"></app-add>
 
-<app-details  *ngIf="editShowComponent" [projectId]="projectDetailId" (closeEditShowComponent)="closeEditShowComponent($event)"></app-details>
+<app-details *ngIf="boolDetailsComponent" [projectId]="projectDetailId!" (closeEditShowComponent)="closeEditShowComponent($event)"></app-details>
+
 <div class="row">
   <div class="col-2">ID</div>
   <div class="col-3">Name</div>
@@ -14,9 +16,17 @@
 </div>
 
 <div class="row">
-  <app-view *ngFor="let project of projects"
+  <div class="col-2">  </div>
+  <div class="col-3"> <input type="text" id="filterName" placeholder="Filter by name" [(ngModel)]="filter" (input)="filterProjects()"> </div>
+  <div class="col-3"> <input type="date" id="filterStartDate" placeholder="Filter by StartDate" [(ngModel)]="filterStartDate" (input)="filterProjects()"> </div>
+  <div class="col-2"> <input type="date" id="filterEndDate" placeholder="Filter by EndDate" [(ngModel)]="filterEndDate" (input)="filterProjects()"> </div>
+</div>
+
+<div class="row">
+  <app-view *ngFor="let project of filteredProjects"
             class="col-12"
             [project]="project"
-            (projectSelected)="projectSelected($event)">
+            (projectSelected)="projectSelected($event)"
+            (enableEditComponent)="editEnable($event)">
   </app-view>
 </div>
