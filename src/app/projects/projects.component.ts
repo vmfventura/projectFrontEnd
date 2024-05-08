@@ -23,7 +23,7 @@ import {NgToastService} from "ng-angular-popup";
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.css'
 })
-export class ProjectsComponent implements OnInit{
+export class ProjectsComponent {
   projects: Projects [] = [];
   filteredProjects: Projects [] = [];
   filter: string = '';
@@ -37,18 +37,16 @@ export class ProjectsComponent implements OnInit{
   @Input() closeEditComponent!: boolean;
   @Input() enableEditComponent!: boolean;
   @Output() enableOrDisable = new EventEmitter<boolean>() ;
+  // @Input() receiveMessage!: string;
 
   constructor(private projectService: ProjectService,
               private NgToast: NgToastService) {
     this.fetchProjects();
+    this.projectService.projectUpdated.subscribe(() => this.fetchProjects());
   }
 
-  ngOnInit() {
-
-  }
-
-  openSuccess(){
-    this.NgToast.info({detail:"Success",summary:"The page was updated with sucess", sticky:true,position:'topRight'})
+  openSuccess(message: string){
+    this.NgToast.info({detail:"Success",summary: message, sticky:false ,position:'bottomRight'})
   }
 
   fetchProjects() {
@@ -57,7 +55,7 @@ export class ProjectsComponent implements OnInit{
         this.projects = list;
         this.filteredProjects = list;
       })
-    this.openSuccess();
+    // this.openSuccess();
   }
 
   filterProjects() {
@@ -69,17 +67,17 @@ export class ProjectsComponent implements OnInit{
     }
     if (this.filterStartDate && this.filterEndDate) {
       this.filteredProjects = this.filteredProjects.filter(project =>
-        new Date(project.endDate) >= new Date(this.filterStartDate!) && new Date(project.startDate) <= new Date(this.filterEndDate!)
+        new Date(project.endDate!) >= new Date(this.filterStartDate!) && new Date(project.startDate!) <= new Date(this.filterEndDate!)
       );
     }
     if (this.filterStartDate || this.filterEndDate) {
       if (this.filterStartDate) {
         this.filteredProjects = this.filteredProjects.filter(project =>
-          new Date(project.startDate) >= new Date(this.filterStartDate!)
+          new Date(project.startDate!) >= new Date(this.filterStartDate!)
         );
       } else {
         this.filteredProjects = this.filteredProjects.filter(project =>
-          new Date(project.endDate) <= new Date(this.filterEndDate!)
+          new Date(project.endDate!) <= new Date(this.filterEndDate!)
         );
       }
     }
@@ -100,11 +98,10 @@ export class ProjectsComponent implements OnInit{
     this.projectDetailId = null;
     this.enableEditComponent = false;
     this.showAddComponent();
-    this.fetchProjects();
+    // this.fetchProjects();
   }
 
   closeEditShowComponent($event: boolean) {
-    // this.enableEditComponent = false;
     this.projectDetailId = null;
     this.showButtonAdd();
     this.showDetailsComponent();
@@ -118,7 +115,6 @@ export class ProjectsComponent implements OnInit{
   }
 
   projectSelected($event: Projects) {
-    console.log(this.enableEditComponent);
     this.projectDetailId = $event;
     if (this.enableEditComponent)
     {
@@ -134,6 +130,11 @@ export class ProjectsComponent implements OnInit{
     this.filter = '';
     this.filterStartDate = null;
     this.filterEndDate = null;
-    this.filterProjects();
+    this.fetchProjects();
+  }
+
+  receiveMessage($event: string) {
+    const receiveMessage = $event;
+    this.openSuccess(receiveMessage)
   }
 }

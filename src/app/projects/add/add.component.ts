@@ -9,6 +9,7 @@ import {
 import {Projects} from "../../models/projects";
 import {ProjectService} from "../project.service";
 import {CommonModule} from "@angular/common";
+import {ProjectsComponent} from "../projects.component";
 
 @Component({
   selector: 'app-add',
@@ -27,6 +28,7 @@ export class AddComponent implements OnInit, OnDestroy {
   @Output() closeShowComponent = new EventEmitter<boolean>();
   @Input() projectId!: Projects;
   @Input() enableOrDisable! : boolean;
+  @Output() sendMessage = new EventEmitter<string>();
 
   constructor(private projectService: ProjectService) {
   }
@@ -37,7 +39,7 @@ export class AddComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isDisabled = this.enableOrDisable;
-    const projectId = this.projectId || new Projects(0,"", new Date(), new Date());
+    const projectId = this.projectId || new Projects(0,"", null, null);
 
     this.addProjectForm = new FormGroup({
       id: this.createFormControl(projectId.id, this.isDisabled),
@@ -97,7 +99,7 @@ export class AddComponent implements OnInit, OnDestroy {
     this.addProjectForm.updateValueAndValidity();
     if (!this.isDisabled)
     {
-      // this.tryToSubmit = true;
+      this.tryToSubmit = true;
       if (this.addProjectForm.valid) {
         const project: Projects = this.addProjectForm.value;
         this.projectService.createProject(project).subscribe({
@@ -108,6 +110,9 @@ export class AddComponent implements OnInit, OnDestroy {
             console.log("error");
           },
           complete: () => {
+            this.projectService.projectUpdated.emit();
+            this.sendMessage.emit("Project " + project.name +" was created");
+            // this.projectComponent.openSuccess("Project " + project.name +" was created");
             this.goBack();
           }
         });
@@ -126,6 +131,8 @@ export class AddComponent implements OnInit, OnDestroy {
             console.log("error");
           },
           complete: () => {
+            this.sendMessage.emit("Project " + project.name +" was updated");
+            this.projectService.projectUpdated.emit();
             this.goBack();
           }
         });
